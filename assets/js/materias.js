@@ -44,7 +44,7 @@ function mostrarMaterias(dataMaterias){
       </div>
         <h4 class="fw-bold">${materiaData.nombre}</h4>
           <p class="text-muted">${materiaData.descripcion}</p>
-          <a><button class="btn btn-sm px-0" id="${materiaData._id}" type="button" >Leer mas&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-arrow-right" >
+          <a><button class="btn btn-sm px-0" id="${materiaData._id}" type="button">Añadir<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-arrow-right" >
             <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"></path>
           </svg></button></a>
       </div>
@@ -53,75 +53,128 @@ function mostrarMaterias(dataMaterias){
     
   }
   //aqui va un for
-  let idMateria1 = dataMaterias.materias[0]._id;
-  let botonMateria = document.getElementById(`${idMateria1}`);
-  console.log(botonMateria)
-  botonMateria.addEventListener('click', (e) => {
-    e.preventDefault;
 
-    let total = user.materias.length;
-    console.log(total);
-    if(total === 0){
-      console.log('entro')
+  const botones = document.querySelectorAll('button[id]');
 
-      const subtemas = [{subtema: "6439e59adbc902aaa03910f3", estado: true}];
-      const materias = [{materia: idMateria1, subtemas: subtemas}];
-      const usuario = {rol: "USER_ROLE", materias: materias};
-      const usuarioJSON = JSON.stringify(usuario);
+  // Agregar manejador de eventos a cada botón
+  botones.forEach((boton) => {
+    boton.addEventListener('click', (event) => {
+      const idBoton = event.target.id;
+      const boton = event.target;
+
+  // Cambiar el texto del botón
+
+      localStorage.setItem('idMateria', idBoton);
+
+      console.log(`Se hizo clic en el botón con id "${idBoton}"`);
+
+      let totaUsuario = user.materias.length;
+
+      for(let i = 0; i < totaUsuario; i++){
+        if(user.materias[0].materia === idBoton){
+          boton.textContent = 'Añadida';
+          boton.disabled = true;
+          return
+        }
+      }
+
       
-      
+      fetch(`http://localhost:8080/api/subtemas`)//fetch
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Error en la respuesta de la petición GET');
+        }
+      })
+      .then(data => {
+        primerSub(data);
+        addMateria(primerSubtema, idBoton);
 
-
-      fetch(`http://localhost:8080/api/usuarios/${user.uid}`,{
-        method: 'PUT',
-        headers: {
-            'Content-Type':'application/json'
-        },
-        body: usuarioJSON
-    })//fetch
-    .then(x => actualizarUsuario())
-    .catch(error => {
-    console.error('Ya tiene la materia registrada:', error);
-      // Aquí puedes mostrar un mensaje de error al usuario, por ejemplo:
-      
-    })
-    }
-    else {
-      console.log('si tiene');
-      actualizarUsuario()
-    }
-
-    
-
-    
-    
-    
-  });
-  
-  const actualizarUsuario = () => {
-    console.log(user.uid)
-  fetch(`http://localhost:8080/api/usuarios/${user.uid}`)
-  .then(response => {
-    if (response.ok) {
-      return response.json();
-    } else {
-      throw new Error('Error en la respuesta de la petición GET');
-    }
-    })
-    .then(data => {
-      
-      localStorage.setItem('user', JSON.stringify(data));
-      console.log('actualizado')
-      window.location.replace("materia/NE1/negociosElectronicos1.html");
-      
   
       })
-    .catch(error => console.error(error));
-}
+      .catch(error => {
+      console.error('Ya tiene la materia registrada:', error);
+        alert('Paso un error intenta mas tarde')
+      })
+      
+      //=========primer subtema
+      let primerSubtema;
+      const primerSub = (data) =>{
+        const total = data.subtemas.length;
+        for(let i = 0; i < total; i++){
+          if(idBoton === data.subtemas[0].materia._id){
+            
+            primerSubtema = data.subtemas[i]._id
+            return
+          }       
+             
+        }
+
+      }
+      
+
+      //=========Añadir la materia
+
+      const addMateria = (primerSubtema) => {
+
+        const subtemas = [{subtema: primerSubtema, estado: true, calificacion:0}];
+        const materias = [{materia: idBoton, subtemas: subtemas}];
+        const usuario = {materias: materias};
+        const usuarioJSON = JSON.stringify(usuario);
+  
+        fetch(`http://localhost:8080/api/usuarios/${user.uid}`,{
+          method: 'PUT',
+          headers: {
+              'Content-Type':'application/json'
+          },
+          body: usuarioJSON
+        })//fetch
+        .then(x => actualizarUsuario())
+        .catch(error => {
+        console.error('Ya tiene la materia registrada:', error);
+          alert('Paso un error intenta mas tarde')
+        })
+
+      }
+      // aquí puedes hacer algo con el id del botón que se ha hecho clic
+      
 
 
 
 
+
+
+      const actualizarUsuario = () => {
+
+      fetch(`http://localhost:8080/api/usuarios/${user.uid}`)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Error en la respuesta de la petición GET');
+        }
+        })
+        .then(data => {
+          
+          localStorage.setItem('user', JSON.stringify(data));
+          console.log('actualizado')
+          alert('Materia Agregada correctamente');
+
+          boton.textContent = 'Añadida';
+          boton.disabled = true;
+      
+          })
+        .catch(error => console.error(error));
+
+        }
+
+      
+        
+    });
+    //actualizarUsuario
+    
+  });
 }
 
 

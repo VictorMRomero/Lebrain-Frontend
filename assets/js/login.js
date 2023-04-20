@@ -31,9 +31,12 @@ usuario.addEventListener("submit", (event) => {
         window.location.replace("inicio.html"); // especifica la ruta de la página a la que deseas redirigir
     })
     .catch(error => {
+
         console.error('Hubo un problema con la solicitud fetch:', error);
         // Aquí puedes mostrar un mensaje de error al usuario, por ejemplo:
         alert('Correo o contraseña incorrectos, intenta de nuevo.');
+
+        location.reload();
     })
 
 

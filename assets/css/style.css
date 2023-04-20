@@ -13,31 +13,123 @@
 
 
 
-.ingresar{
-    width: 100%;
-    font-size: 20px;
+.ingresar {
+    --c: rgb(1, 42, 117);
+    color: var(--c);
+    font-size: 18px;
+    border: 0.3em solid var(--c);
+    border-radius: 1.5em;
+    width: 18em;
+    height: 3.5em;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-family: 'Tilt Neon';
+    letter-spacing: 0.1em;
     text-align: center;
-    border: 2px solid rgb(0, 8, 53);
-    color: rgb(255, 255, 255);
-    border-radius: 50px;
-    padding: 15px 80px;
-    background: rgb(1, 42, 117);
-    margin-bottom: 10px;
+    line-height: 3em;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: 0.5s;
+    margin: 1em;
     
 }
-
-.registrarse{
-    width: 100%;
-    font-size: 20px;
-    text-align: center;
-    border: 2px solid rgb(0, 8, 53);
-    color: rgb(255, 255, 255);
-    border-radius: 50px;
-    padding: 15px 80px;
-    background: rgb(1, 42, 117);
-    margin-bottom: 10px;
-
+.ingresar span {
+    position: absolute;
+    width: 25%;
+    height: 100%;
+    background-color: var(--c);
+    transform: translateY(150%);
+    border-radius: 50%;
+    left: calc((var(--n) - 1) * 30%);
+    transition: 0.5s;
+    transition-delay: calc((var(--n) - 1) * 0.05s);
+    z-index: -1;
 }
+
+.ingresar:hover {
+    color: wheat;
+}
+
+.ingresar:hover span {
+    transform: translateY(0) scale(2);
+}
+
+.ingresar span:nth-child(1) {
+    --n: 1;
+}
+
+.ingresar span:nth-child(2) {
+    --n: 2;
+}
+
+.ingresar span:nth-child(3) {
+    --n: 3;
+}
+
+.ingresar span:nth-child(4) {
+    --n: 4;
+}
+
+.registrarse {
+    --c: rgb(1, 42, 117);
+    color: var(--c);
+    font-size: 18px;
+    border: 0.3em solid var(--c);
+    border-radius: 1.5em;
+    width: 18em;
+    height: 3.5em;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-family: 'Tilt Neon';
+    letter-spacing: 0.1em;
+    text-align: center;
+    line-height: 3em;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: 0.5s;
+    margin: 1em;
+    
+}
+.registrarse span {
+    position: absolute;
+    width: 25%;
+    height: 100%;
+    background-color: var(--c);
+    transform: translateY(150%);
+    border-radius: 50%;
+    left: calc((var(--n) - 1) * 25%);
+    transition: 0.5s;
+    transition-delay: calc((var(--n) - 1) * 0.1s);
+    z-index: -1;
+}
+
+.registrarse:hover {
+    color: wheat;
+}
+
+.registrarse:hover span {
+    transform: translateY(0) scale(2);
+}
+
+.registrarse span:nth-child(1) {
+    --n: 1;
+}
+
+.registrarse span:nth-child(2) {
+    --n: 2;
+}
+
+.registrarse span:nth-child(3) {
+    --n: 3;
+}
+
+.registrarse span:nth-child(4) {
+    --n: 4;
+}
+
+
 
 .blog-card {
 	display: flex;

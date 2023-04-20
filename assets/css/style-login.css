@@ -21,3 +21,7 @@
     border: 2px solid rgb(0, 8, 53);
     border-radius: 50px;
 }
+
+.btn{
+    border-radius: 18px;
+}
