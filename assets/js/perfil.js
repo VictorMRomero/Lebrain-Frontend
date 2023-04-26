@@ -19,6 +19,27 @@ actualizarUsuario.innerHTML = `
 <div class="mb-5"><button class="btn btn-primary shadow" type="submit">Entrar</button></div>
 `;
 
+const actualizarDatosUsuario = () => {
+  fetch(`https://lebrain.herokuapp.com/api/usuarios/${user.uid}`)
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error('Error en la respuesta de la petición GET');
+    }
+    })
+    .then(data => {
+      
+      localStorage.setItem('user', JSON.stringify(data));
+  
+      alert('Actualizacion correcta');
+      
+      location.reload();
+      
+  
+      })
+    .catch(error => console.error(error));
+  }
 
 
 actualizarUsuario.addEventListener("submit", (event) => {
@@ -31,21 +52,22 @@ actualizarUsuario.addEventListener("submit", (event) => {
     const valorPassword = document.querySelector('#pass1').value;
 
 
-    const usuario = {nombre: valorNombre, password: valorPassword, rol: "USER_ROLE"};
+    const usuario = {nombre: valorNombre, password: valorPassword};
     const usuarioJSON = JSON.stringify(usuario);
     
     console.log(usuarioJSON);
 
-    fetch(`http://localhost:8080/api/usuarios/${user.uid}`,{
+    fetch(`https://lebrain.herokuapp.com/api/usuarios/${user.uid}`,{
         method: 'PUT',
         headers: {
             'Content-Type':'application/json'
         },
         body: usuarioJSON
     })
-    .then(x => console.log('HECHO'))
+    .then(x => actualizarDatosUsuario())
 
 });
+
 
 
 function checkPasswords() {
@@ -62,7 +84,7 @@ function checkPasswords() {
 
 for(let i = 0; i<totalMaterias; i++){
     
-    fetch(`http://localhost:8080/api/materias/${user.materias[i].materia}`)
+    fetch(`https://lebrain.herokuapp.com/api/materias/${user.materias[i].materia}`)
   .then(response => {
     if (response.ok) {
       return response.json();
@@ -98,6 +120,40 @@ for(let i = 0; i<totalMaterias; i++){
             </div>
         </div>
         `;
+
+        let botonEliminar = document.querySelector('.eliminar');
+        botonEliminar.addEventListener('click', (e) => {
+          e.preventDefault();
+
+
+
+          
+          
+          const eliminarJSON = `{"eliminar": ${JSON.stringify(dataMaterias._id)}}`
+          
+
+          if (window.confirm('¿Está seguro de que desea eliminar la materia? Perdera todos sus avances.')) {
+            // La acción se realizará si el usuario hace clic en "Aceptar"
+            fetch(`https://lebrain.herokuapp.com/api/usuarios/${user.uid}`,{
+              method: 'PUT',
+              headers: {
+                  'Content-Type':'application/json'
+              },
+              body: eliminarJSON
+            })//fetch
+            .then(x => actualizarDatosUsuario())
+            .catch(error => {
+            console.error('Ya tiene la materia registrada:', error);
+              alert('Paso un error intenta mas tarde')
+            })
+          } else {
+            // La acción no se realizará si el usuario hace clic en "Cancelar"
+
+          }
+
+
+          
+        })
     }
     
 }

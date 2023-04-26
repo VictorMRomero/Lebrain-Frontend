@@ -1,11 +1,11 @@
 const user = JSON.parse(localStorage.getItem('user'));
 const idMateria = localStorage.getItem('idMateria');
-console.log(idMateria)
+
 let dataMaterias = '';
 
 
 // Se rellena con los subtemas guardados en la base de datos
-fetch('http://localhost:8080/api/subtemas')
+fetch('https://lebrain.herokuapp.com/api/subtemas')
   .then(response => {
     if (response.ok) {
       return response.json();
@@ -26,7 +26,7 @@ fetch('http://localhost:8080/api/subtemas')
 
 function mostrarSubtemas(dataSubtemas){
 
-
+  localStorage.setItem('subtemas', JSON.stringify(dataSubtemas));
   let total = dataSubtemas.total;
 
 
@@ -44,14 +44,12 @@ function mostrarSubtemas(dataSubtemas){
     
         let ponerSubtema = document.getElementById("primerSubtema");
         
-    
-        ponerSubtema.innerHTML +=  `<p class="mb-3" id="${subtemaData._id}">${subtemaData.nombre}</p>`;
+        ponerSubtema.innerHTML += `<div class="subtema"><p>${subtemaData.nombre}</p><button class="bloqueado" id="${subtemaData._id}"></button></div>`
 
     } if(subtemaData.nombre[0] === "2"){
         let ponerSubtema = document.getElementById("segundoSubtema");
         
-        ponerSubtema.innerHTML +=  `<p class="mb-3" id="${subtemaData._id}" >${subtemaData.nombre}</p>`;
-
+        ponerSubtema.innerHTML += `<div class="subtema"><p>${subtemaData.nombre}</p><button class="bloqueado" id="${subtemaData._id}"></button></div>`
     }
 
 
@@ -64,6 +62,7 @@ function mostrarSubtemas(dataSubtemas){
 //Se ponen los que ya aprobo el estudiante
 
   let totalMateriasUsuario = user.materias.length;
+
   for(let i = 0; i < totalMateriasUsuario; i++){
     if(user.materias[i].materia === idMateria){
 
@@ -71,15 +70,11 @@ function mostrarSubtemas(dataSubtemas){
 
       for(let j = 0; j < totalSubtemas; j++){
         let Subtema = user.materias[i].subtemas[j]
-        let idSubtema = Subtema.subtema;
-              
+        let idSubtema = Subtema.subtema;   
         
-        let mostrar = document.getElementById(`${idSubtema}`);
-        
-        console.log(Subtema)
+        // Se tiene el id del usuario, con eso se jala los datos de los subtemas
 
-        // Se rellena con los subtemas guardados en la base de datos
-        fetch(`http://localhost:8080/api/subtemas/${idSubtema}`)
+        fetch(`https://lebrain.herokuapp.com/api/subtemas/${idSubtema}`)
         .then(response => {
         if (response.ok) {
           return response.json();
@@ -95,23 +90,33 @@ function mostrarSubtemas(dataSubtemas){
         .catch(error => console.error(error));
 
         const mostrarSubtemas = (data) => {
+          
+          //const botones = document.querySelectorAll('button[id]');
+          let boton = document.getElementById(`${data._id}`);
 
-          mostrar.innerHTML =`<a><p class="mb-3">${data.nombre}</p></a>`;
-          mostrar.addEventListener('click', (event) => {
-            console.log(Subtema.estado)
-            if(Subtema.estado === false){
-              event.preventDefault();
-              console.log('entro')
-              mensaje = document.createElement('p');
-              mensaje.textContent = 'Lo siento, pasa el tema anterior para desbloquear';
-              mostrar.parentNode.replaceChild(mensaje, mostrar);
-            } else {
-              localStorage.setItem('idSubtema', idSubtema)
+          
+          if(Subtema.calificacion === 0){
+
+            boton.classList.add("haciendo");
+            boton.addEventListener('click', (e) => {
+              e.preventDefault()
+              window.location.href = data.link;
+              localStorage.setItem('idSubtema', idSubtema);
               localStorage.setItem('linkSubtema', data.link);
-              window.location.href = `../../materia/NE1/${data.link}`
-            }
-            
-          });
+              localStorage.setItem('numSubtema', j);
+
+            })
+          } if(Subtema.calificacion > 6){
+            boton.classList.add('hecho');
+            boton.addEventListener('click', (e) => {
+              e.preventDefault();
+              alert('Ya realizaste el objeto, vamos por el siguiente');
+            })
+          } 
+
+
+
+
         }
 
       }

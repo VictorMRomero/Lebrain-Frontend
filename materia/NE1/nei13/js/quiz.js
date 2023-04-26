@@ -104,9 +104,5 @@ let quiz = [
         answer: 4,
     },
 ];
-let idSigSubtema= "6439e727dbc902aaa0391102";
-let idSubtema= "6439e6b2dbc902aaa03910fd";
 
-let idMateria= "6439b737e37ba85aedf21eb3";
-
-let siguienteSubtema = "../nei21/nei21.html"
+var palabras = ["Búsqueda del producto", "Selección del producto", "Proceso de pago", "Confirmación de la compra", "Entrega del producto", "Servicio postventa"];

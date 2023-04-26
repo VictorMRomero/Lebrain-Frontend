@@ -1,5 +1,12 @@
 const user = JSON.parse(localStorage.getItem('user'));
-idSubtema = localStorage.getItem('idSubtema');
+let idSubtemaActual = localStorage.getItem('idSubtema');
+let idMateria = localStorage.getItem('idMateria');
+let numSubtema = localStorage.getItem('numSubtema');
+let todosSubtemas = JSON.parse(localStorage.getItem('subtemas'));
+
+
+let idSigSubtema = todosSubtemas.subtemas[+numSubtema+1]._id;
+
 
 let index = 0;
 let attempt = 1;
@@ -8,11 +15,10 @@ let wrong = 0;
 let malas = [];
 let totalQuestions = 10;
 let attempts = 1; // agregar variable attempts
-console.log(idSubtema)
+
 //========================= Actualizar Usuario =============================================
 const actualizarUsuario = () => {
-  console.log(user.uid)
-fetch(`http://localhost:8080/api/usuarios/${user.uid}`)
+fetch(`https://lebrain.herokuapp.com/api/usuarios/${user.uid}`)
 .then(response => {
   if (response.ok) {
     return response.json();
@@ -23,9 +29,10 @@ fetch(`http://localhost:8080/api/usuarios/${user.uid}`)
   .then(data => {
     
     localStorage.setItem('user', JSON.stringify(data));
-    console.log('actualizado');
+
+    alert('Ya puedes pasar al siguiente tema');
     
-    window.location.href=`${siguienteSubtema}`;
+    window.location.href=`../negociosElectronicos1.html`;
     
 
     })
@@ -35,24 +42,49 @@ fetch(`http://localhost:8080/api/usuarios/${user.uid}`)
 //=============================== Actualizar Subtema =====================================================
 
 const actualizarSubtema = () => {
-
-  const subtemas = [{subtema: `${idSigSubtema}`, estado: true}];
+  
+  const subtemas = [{subtema: `${idSigSubtema}`, estado: true, calificacion: 0}];
   const materias = [{materia: `${idMateria}`, subtemas: subtemas}];
-  const usuario = {rol: "USER_ROLE", materias: materias};
+  const usuario = {materias: materias};
+  
+  const usuarioJSON = JSON.stringify(usuario);
+  
+  
+  
+  fetch(`https://lebrain.herokuapp.com/api/usuarios/${user.uid}`,{
+    method: 'PUT',
+    headers: {
+      'Content-Type':'application/json'
+    },
+    body: usuarioJSON
+  })//fetch
+  .then(x => actualizarUsuario())
+  .catch(error => {
+    console.error('Ya tiene la materia registrada:', error);
+    // Aquí puedes mostrar un mensaje de error al usuario, por ejemplo:
+    
+  })
+}
+
+//=============================== Actualizar Subtema Hecho===============================================
+const actualizarSubtemaHecho = (score) => {
+  
+  const subtemas = [{subtema: `${idSubtemaActual}`, estado: true, calificacion: score}];
+  const materias = [{materia: `${idMateria}`, subtemas: subtemas}];
+  const usuario = {materias: materias};
 
   const usuarioJSON = JSON.stringify(usuario);
-  console.log(usuarioJSON)
-  
 
 
-  fetch(`http://localhost:8080/api/usuarios/${user.uid}`,{
+
+  fetch(`https://lebrain.herokuapp.com/api/usuarios/${user.uid}`,{
     method: 'PUT',
     headers: {
         'Content-Type':'application/json'
     },
     body: usuarioJSON
 })//fetch
-.then(x => actualizarUsuario())
+.then(x => actualizarSubtema())
 .catch(error => {
 console.error('Ya tiene la materia registrada:', error);
   // Aquí puedes mostrar un mensaje de error al usuario, por ejemplo:
@@ -79,7 +111,7 @@ window.addEventListener("load", function() {
    setTimeout(function() {
     hideLoader();
     document.getElementById("questionScreen").style.display = "block";
-  }, 3000); 
+  }, 1000); 
 });
 
 
@@ -164,7 +196,6 @@ function checkAnswer(option){
        
         malas.push(questions[index]);
         
-        console.log(malas)
     }
     $(".scoreBox span").text((score * 10))
     $(".optionBox span").attr("onclick", "") // prevent selecting a different answer
@@ -219,9 +250,10 @@ function result()
         $("#correctQuestion").text(score)
         $("#wrongAnswers").text(wrong)
         // resultScreen.style.display = "block";
-        console.log(malas);
+
         
         const siguiente = document.querySelector('.denegado');
+        const ocultar = document.querySelector('.ocultar');
         
  
         attempts = localStorage.getItem('attempts')
@@ -232,10 +264,6 @@ function result()
           siguiente.textContent = "Reintentar";
           attempts++; // aumentar el número de intentos
           localStorage.setItem('attempts', JSON.stringify(attempts));
-
-
-
-
           siguiente.addEventListener("click", () => {
             window.location.href = "questions.html";
           });
@@ -253,9 +281,10 @@ function result()
           });
         } else if(score >= 6){
           $(".mensaje span").text("Fantastico, puedes avanzar al siguiente tema");
-          siguiente.textContent = "Siguiente Tema";
+          siguiente.textContent = "Terminar";
+          ocultar.style.display = 'none';
           siguiente.addEventListener("click", () => {
-            actualizarSubtema();
+            actualizarSubtemaHecho(score);
 
 
           });

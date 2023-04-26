@@ -8,7 +8,7 @@ usuario.addEventListener("submit", (event) => {
     let usuario = {correo: valorCorreo, password: valorPassword}
     let usuarioJSON = JSON.stringify(usuario);
     
-    fetch('http://localhost:8080/api/auth/login', {
+    fetch('https://lebrain.herokuapp.com/api/auth/login', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'

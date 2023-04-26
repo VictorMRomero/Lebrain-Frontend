@@ -1,8 +1,8 @@
 const user = JSON.parse(localStorage.getItem('user'));
 let dataMaterias = '';
 
-
-fetch('http://localhost:8080/api/materias')
+//Se listan las materias disponibles en la base de datos
+fetch('https://lebrain.herokuapp.com/api/materias')
   .then(response => {
     if (response.ok) {
       return response.json();
@@ -22,7 +22,7 @@ fetch('http://localhost:8080/api/materias')
   .catch(error => console.error(error));
 
 function mostrarMaterias(dataMaterias){
-  console.log(dataMaterias)
+
   
   let total = dataMaterias.total;
   let materiaData = dataMaterias.materias[0];
@@ -79,7 +79,7 @@ function mostrarMaterias(dataMaterias){
       }
 
       
-      fetch(`http://localhost:8080/api/subtemas`)//fetch
+      fetch(`https://lebrain.herokuapp.com/api/subtemas`)//fetch
       .then(response => {
         if (response.ok) {
           return response.json();
@@ -122,8 +122,9 @@ function mostrarMaterias(dataMaterias){
         const materias = [{materia: idBoton, subtemas: subtemas}];
         const usuario = {materias: materias};
         const usuarioJSON = JSON.stringify(usuario);
+        console.log(usuarioJSON)
   
-        fetch(`http://localhost:8080/api/usuarios/${user.uid}`,{
+        fetch(`https://lebrain.herokuapp.com/api/usuarios/${user.uid}`,{
           method: 'PUT',
           headers: {
               'Content-Type':'application/json'
@@ -147,7 +148,7 @@ function mostrarMaterias(dataMaterias){
 
       const actualizarUsuario = () => {
 
-      fetch(`http://localhost:8080/api/usuarios/${user.uid}`)
+      fetch(`https://lebrain.herokuapp.com/api/usuarios/${user.uid}`)
       .then(response => {
         if (response.ok) {
           return response.json();
@@ -158,6 +159,7 @@ function mostrarMaterias(dataMaterias){
         .then(data => {
           
           localStorage.setItem('user', JSON.stringify(data));
+          localStorage.setItem('idMateria', idBoton);
           console.log('actualizado')
           alert('Materia Agregada correctamente');
 

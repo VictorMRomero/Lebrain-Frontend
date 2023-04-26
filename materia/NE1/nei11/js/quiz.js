@@ -125,11 +125,10 @@ let quiz = [
     },
 ];
 
-let idSigSubtema= "6439e69cdbc902aaa03910f8";
 
-let idMateria= "6439b737e37ba85aedf21eb3";
 
-let siguienteSubtema = "../nei12/nei12.html";
 
-let linkReintentar = "nei11.html"
+
+
+
 
